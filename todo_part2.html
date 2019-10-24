@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+	<title>ToDoList</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+	<body>
+		<div class="wrapper">
+			<form>
+				<input class="input"
+					type = "text" 
+					id = "Node"
+					name = "createNode"
+				>
+				<button class="submit">
+				  	<strong>Add Note</strong> 
+				</button>
+			</form>
+
+			<ol class="notes"></ol>
+		</div>
+		
+		<script>
+			
+			const $input = document.querySelector('.input');
+			const $notesToOl = document.querySelector('.notes');
+			const $notesNew = document.querySelector('.submit');
+			const localNote = localStorage.getItem('note');
+
+
+			const myToDoList = {	
+
+				notesArr: [],
+
+				createLi: function(note, id) {
+					
+
+					const $li = document.createElement('li');
+					$li.innerText = note;
+					$li.id = id;
+										
+					const $div = document.createElement('div');
+					$div.append($li);
+
+					const $button1 = document.createElement('button');
+					$button1.classList = 'confirm'; 
+					$button1.innerText = 'Выполнено';
+					$div.append($button1);
+
+					const $button2 = document.createElement('button');
+					$button2.classList = 'delete';  
+					$button2.innerText = 'Удалить';
+					$div.append($button2);
+
+					$notesToOl.append($div);
+				},
+
+				confirmNote: function() {
+					let butt = event.target;
+					butt.setAttribute('disabled', true);
+					let text = event.target.parentElement.firstElementChild;
+					text.classList = 'text';
+
+					find = +event.target.parentElement.firstElementChild.id;
+					rezult = myToDoList.findId(find);
+					myToDoList.notesArr[rezult].isDone = false;
+				},
+
+
+				deleteNote: function (index_note, find) {
+					let text_note = myToDoList.notesArr[index_note].text;
+					let del = confirm('Вы точно хотите удалить заметку:  № '+ (+index_note + 1)  +'  ' + text_note);
+				
+					if (del) {
+					 	myToDoList.notesArr.splice(index_note,1);
+					 	let myNode = document.getElementById(find);
+						myNode.parentElement.remove();
+						localStorage.setItem('note', JSON.stringify(this.notesArr)); 
+					}  
+				},
+
+				findId: function(id) {
+					let rezult = this.notesArr.findIndex(item => item.id === id);
+					if (rezult === -1) {
+						alert('Такой задачи нет'); 
+						return rezult;
+					}	
+					else return rezult;
+				},
+				
+				fromJSON: function() {
+					if (localNote && localNote.length > 1) {
+						let fromJson = JSON.parse(localNote);
+						fromJson.forEach( function (item) { 
+							myToDoList.createLi(item.text, item.id);
+							myToDoList.notesArr.push(item);
+						});
+					}
+				},
+
+				createNote: function() {
+					if ($input.value === "") return alert('Заметка не может быть пустой');
+
+					const note = {
+						text: $input.value,
+						isDone: true,
+						id: +Math.random().toFixed(2)
+					};
+
+					if (myToDoList.notesArr.length > 1) {
+						let findNote = myToDoList.notesArr.find(item => item.text === $input.value);
+							if(findNote) return alert('Такая заметка уже есть!');
+					}	
+
+					myToDoList.notesArr.push(note);
+					myToDoList.createLi($input.value, note.id);
+					localStorage.setItem('note', JSON.stringify(this.notesArr)); 
+					$input.value = '';                 //  очищаем поле для ввода заметки.
+				},	
+			}
+			
+			myToDoList.fromJSON();
+
+			$notesNew.addEventListener('click', (event) => {
+				event.preventDefault();
+				myToDoList.createNote();
+			});
+			 
+
+			$notesToOl.addEventListener('click', (event) => {
+				let find = +event.target.parentElement.firstElementChild.id;
+				let result = myToDoList.findId(find);
+				if (event.target.className === 'delete') {
+					myToDoList.deleteNote(result, find);
+				}
+				if (event.target.className === 'confirm') myToDoList.confirmNote();
+
+			});	
+
+
+						
+		</script>
+	</body>
+
+
+
+
+</html>

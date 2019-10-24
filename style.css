@@ -1,0 +1,33 @@
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	font-family: Arial, Open Sans, sans-serif;
+}
+
+.wrapper {
+	min-width: 320px;
+	max-width: 1400px;
+	margin: auto;
+	padding: 10px;
+	height: 100vh;
+	background: url(background1.gif) center center;
+	background-size: 100% auto;
+	background-color: #CFD9E1;
+	padding-bottom: 45%;
+	background-repeat: no-repeat;
+}
+
+.text {
+	text-decoration: line-through;
+	text-decoration-color: red;
+}
+
+.textnone {
+	text-decoration: none;
+
+}
